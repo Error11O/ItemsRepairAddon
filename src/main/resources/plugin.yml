@@ -1,0 +1,38 @@
+name: ItemsRepairAddon
+version: '1.0'
+main: dev.Error110.itemsRepairAddon.ItemsRepairAddonPlugin
+api-version: '1.20'
+prefix: ItemsRepairAddon
+authors: [ Error110 ]
+description: Addon for MMOItems to add repairing for a commission.
+website: https://error11o.github.io/portfolio/
+depend: [ MMOItems, MythicLib ]
+commands:
+  mmorepair:
+        description: Main command for ItemsRepairAddon
+        usage: /<command> <subcommand>
+
+permissions:
+    itemsrepairaddon.admin:
+            description: Allows the use of /mmorepair command and bypass dropping.
+            default: op
+    itemsrepairaddon.10:
+            description: 10% chance to drop loot
+    itemsrepairaddon.20:
+            description: 20% chance to drop loot
+    itemsrepairaddon.30:
+            description: 30% chance to drop loot
+    itemsrepairaddon.40:
+            description: 40% chance to drop loot
+    itemsrepairaddon.50:
+            description: 50% chance to drop loot
+    itemsrepairaddon.60:
+            description: 60% chance to drop loot
+    itemsrepairaddon.70:
+            description: 70% chance to drop loot
+    itemsrepairaddon.80:
+            description: 80% chance to drop loot
+    itemsrepairaddon.90:
+            description: 90% chance to drop loot
+    itemsrepairaddon.100:
+            description: 100% chance to drop loot
