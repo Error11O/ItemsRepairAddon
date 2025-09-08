@@ -16,6 +16,7 @@ class Listener : Listener {
 
     @EventHandler
     fun onDeath(event: PlayerDeathEvent) {
+        if (event.player.isOp || event.player.hasPermission("itemsrepairaddon.admin")) return
         event.drops.forEach { item ->
             ItemsRepairAddon.config!!.repairableItemsTypes.forEach { type ->
                 if (MMOItems.getType(item)?.name == type) {
@@ -30,9 +31,13 @@ class Listener : Listener {
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
         val item = event.item ?: return
-        if (item.durability.toInt() == 1) {
-            event.player.sendMessage("${ChatColor.RED} this item is too damaged to be used!")
-            event.isCancelled = true
+        if (item.type.maxDurability > 0) {
+            val meta = item.itemMeta
+            val damage = if (meta is Damageable) meta.damage else item.durability.toInt()
+            if (damage >= item.type.maxDurability - 1) {
+                event.player.sendMessage("${ChatColor.RED} this item is too damaged to be used!")
+                event.isCancelled = true
+            }
         }
     }
 
