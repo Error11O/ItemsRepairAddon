@@ -15,6 +15,7 @@ class ItemsRepairAddonPlugin : JavaPlugin() {
         server.pluginManager.registerEvents(Listener(), this)
         this.getCommand("mmorepair")?.setExecutor(Commands())
         this.getCommand("mmorepair")?.tabCompleter = Commands() as TabCompleter
+        logger.info("ItemsRepairAddon enabled")
     }
 
     fun reload(): Boolean {

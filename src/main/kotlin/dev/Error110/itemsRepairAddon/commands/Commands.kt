@@ -23,6 +23,7 @@ class Commands : CommandExecutor, TabCompleter {
         }
 
         when (args[0].lowercase()) {
+            // reload command
             "reload" -> {
                 val plugin = Bukkit.getPluginManager().getPlugin("ItemsRepairAddon") as? ItemsRepairAddonPlugin
                 if (plugin != null) {
@@ -32,7 +33,7 @@ class Commands : CommandExecutor, TabCompleter {
                     sender.sendMessage("Plugin instance not found.")
                 }
             }
-
+            // info command
             "info" -> {
                 if (sender !is Player) return true
                 val player = sender
@@ -50,15 +51,18 @@ class Commands : CommandExecutor, TabCompleter {
                 }
                 sender.sendMessage("${ChatColor.GREEN}Item Type: ${type.name}, Item ID: $id")
             }
-
+            // repair command item in hand
             "hand" -> {
                 val player: Player? = when (sender) {
+                    // if player we just use them as sender
                     is Player -> sender
+                    // check if console provided a player name
                     is ConsoleCommandSender -> {
                         if (args.size < 2) {
                             sender.sendMessage("${ChatColor.RED}Usage: /$label hand <player>")
                             return true
                         }
+                        // get the player by name
                         val target = Bukkit.getPlayer(args[1])
                         if (target == null) {
                             sender.sendMessage("${ChatColor.RED}Player not found.")
@@ -90,6 +94,7 @@ class Commands : CommandExecutor, TabCompleter {
                     sender.sendMessage("${ChatColor.RED}This item is not repairable.")
                     return true
                 }
+                // try to repair the item if checks are passed
                 DisableUtils.removeDisabledName(player)
                 player.sendMessage("${ChatColor.GREEN}Item repaired successfully.")
                 return true
@@ -99,6 +104,7 @@ class Commands : CommandExecutor, TabCompleter {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String?>? {
+        // simple tab completion for the first argument
         if (sender.isOp) {
             return listOf("reload", "info", "hand")
         }

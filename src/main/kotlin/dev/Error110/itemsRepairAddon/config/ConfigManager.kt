@@ -3,11 +3,13 @@ package dev.Error110.itemsRepairAddon.config
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.plugin.Plugin
 
+// lore config for the title and lines
 data class LoreConfig(
     val title: String = "BROKEN ITEM",
     val lines: List<String> = emptyList()
 )
 
+// main plugin config
 data class PluginConfig(
     val configVersion: Int = 1,
     val disabledMessage : String = "This item is too damaged to be used!",
@@ -18,6 +20,7 @@ data class PluginConfig(
 
 object ConfigManager {
 
+    // load the config from the plugin
     fun load(plugin: Plugin): PluginConfig {
         plugin.saveDefaultConfig()
         val c = plugin.config
@@ -46,6 +49,7 @@ object ConfigManager {
         )
     }
 
+    // reload config just by loading it could tbh just do in plugin
     fun reload(plugin: Plugin): PluginConfig {
         plugin.reloadConfig()
         return load(plugin)

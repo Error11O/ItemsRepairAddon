@@ -19,6 +19,7 @@ import org.bukkit.inventory.EquipmentSlot
 
 class Listener : Listener {
 
+    // this is the death event where we check the dropped items if they are mmoitems and if they are in the config list
     @EventHandler
     fun onDeath(event: PlayerDeathEvent) {
         event.drops.forEach { item ->
@@ -31,6 +32,7 @@ class Listener : Listener {
         }
     }
 
+    // this is the attack event from mythiclib to prevent attacking with broken items
     @EventHandler
     fun onAttack(event : AttackEvent) {
         if (!event.attack.isPlayer) return
@@ -42,6 +44,7 @@ class Listener : Listener {
         }
     }
 
+    // this is the interact event to prevent using broken items
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
         val player = event.player
@@ -56,6 +59,7 @@ class Listener : Listener {
         }
     }
 
+    // this is the interact entity event to prevent using broken items
     @EventHandler
     fun onInteractEntity(event: PlayerInteractEntityEvent) {
         val player = event.player
@@ -70,6 +74,7 @@ class Listener : Listener {
         }
     }
 
+    // this is the entity damage by entity event to prevent attacking with broken items
     @EventHandler
     fun onAttack(event: EntityDamageByEntityEvent) {
         val player = event.damager as? Player ?: return
@@ -80,6 +85,7 @@ class Listener : Listener {
         }
     }
 
+    // this is the block break event to prevent breaking blocks with broken items
     @EventHandler(ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent) {
         val player = event.player
@@ -90,6 +96,7 @@ class Listener : Listener {
         }
     }
 
+    // this is the block place event to prevent placing blocks with broken items
     @EventHandler(ignoreCancelled = true)
     fun onBlockPlace(event: BlockPlaceEvent) {
         val player = event.player
