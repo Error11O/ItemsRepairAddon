@@ -11,6 +11,6 @@ object PermUtils {
         p.hasPermission("$BASE.$level") || p.hasPermission("$BASE.*")
 
     // Highest level the player has (50 if none)
-    fun lowestLevel(p: Permissible, min: Int = 1, max: Int = 300): Int =
-        (min downTo max).firstOrNull { hasLevel(p, it) } ?: 50
+    fun highestLevel(p: Permissible, min: Int = 1, max: Int = 300): Int =
+        (max downTo min).firstOrNull { hasLevel(p, it) } ?: 50
 }

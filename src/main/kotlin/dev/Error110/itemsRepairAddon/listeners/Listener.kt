@@ -1,43 +1,72 @@
 package dev.Error110.itemsRepairAddon.listeners
 
 import dev.Error110.itemsRepairAddon.ItemsRepairAddon
+import dev.Error110.itemsRepairAddon.utils.DisableUtils
 import dev.Error110.itemsRepairAddon.utils.PermUtils
+import io.lumine.mythic.lib.api.event.AttackEvent
 import net.Indyuce.mmoitems.MMOItems
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.meta.Damageable
+import org.bukkit.inventory.EquipmentSlot
 
 class Listener : Listener {
 
     @EventHandler
     fun onDeath(event: PlayerDeathEvent) {
-        if (event.player.isOp || event.player.hasPermission("itemsrepairaddon.admin")) return
         event.drops.forEach { item ->
             ItemsRepairAddon.config!!.repairableItemsTypes.forEach { type ->
                 if (MMOItems.getType(item)?.name == type) {
                     val randomNumber = (1..100).random()
-                    if (randomNumber <= PermUtils.lowestLevel(event.player)) item.durability = (item.type.maxDurability - 1).toShort()
+                    if (randomNumber <= PermUtils.highestLevel(event.player)) DisableUtils.addBroken(item)
                 }
             }
         }
     }
 
-    // Prevent using items with 1 durability (right/left click)
+    @EventHandler
+    fun onAttack(event : AttackEvent) {
+        if (!event.attack.isPlayer) return
+        val player = event.attack.player
+        val item = player.inventory.itemInMainHand
+        if (DisableUtils.isBroken(item)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', ItemsRepairAddon.config!!.disabledMessage))
+            event.isCancelled = true
+        }
+    }
+
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
-        val item = event.item ?: return
-        if (item.type.maxDurability > 0) {
-            val meta = item.itemMeta
-            val damage = if (meta is Damageable) meta.damage else item.durability.toInt()
-            if (damage >= item.type.maxDurability - 1) {
-                event.player.sendMessage("${ChatColor.RED} this item is too damaged to be used!")
-                event.isCancelled = true
-            }
+        val player = event.player
+        val usedItem = event.item ?: when (event.hand) {
+            EquipmentSlot.OFF_HAND -> player.inventory.itemInOffHand
+            else -> player.inventory.itemInMainHand
+        }
+
+        if (DisableUtils.isBroken(usedItem)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', ItemsRepairAddon.config!!.disabledMessage))
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun onInteractEntity(event: PlayerInteractEntityEvent) {
+        val player = event.player
+        val usedItem = when (event.hand) {
+            EquipmentSlot.OFF_HAND -> player.inventory.itemInOffHand
+            else -> player.inventory.itemInMainHand
+        }
+
+        if (DisableUtils.isBroken(usedItem)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', ItemsRepairAddon.config!!.disabledMessage))
+            event.isCancelled = true
         }
     }
 
@@ -45,13 +74,29 @@ class Listener : Listener {
     fun onAttack(event: EntityDamageByEntityEvent) {
         val player = event.damager as? Player ?: return
         val item = player.inventory.itemInMainHand
-        if (item.type.maxDurability > 0) {
-            val meta = item.itemMeta
-            val damage = if (meta is Damageable) meta.damage else item.durability.toInt()
-            if (damage >= item.type.maxDurability - 1) {
-                player.sendMessage("${ChatColor.RED} this item is too damaged to be used!")
-                event.isCancelled = true
-            }
+        if (DisableUtils.isBroken(item)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', ItemsRepairAddon.config!!.disabledMessage))
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onBlockBreak(event: BlockBreakEvent) {
+        val player = event.player
+        val item = player.inventory.itemInMainHand
+        if (DisableUtils.isBroken(item)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', ItemsRepairAddon.config!!.disabledMessage))
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    fun onBlockPlace(event: BlockPlaceEvent) {
+        val player = event.player
+        val item = event.itemInHand
+        if (DisableUtils.isBroken(item)) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', ItemsRepairAddon.config!!.disabledMessage))
+            event.isCancelled = true
         }
     }
 }

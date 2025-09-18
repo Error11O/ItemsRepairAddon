@@ -2,6 +2,7 @@ package dev.Error110.itemsRepairAddon.commands
 
 import dev.Error110.itemsRepairAddon.ItemsRepairAddon
 import dev.Error110.itemsRepairAddon.ItemsRepairAddonPlugin
+import dev.Error110.itemsRepairAddon.utils.DisableUtils
 import net.Indyuce.mmoitems.MMOItems
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -76,22 +77,20 @@ class Commands : CommandExecutor, TabCompleter {
                     sender.sendMessage("${ChatColor.RED}You must be holding an item to use this command.")
                     return true
                 }
-                if (item.durability.toInt() >= item.type.maxDurability) {
+                if (!DisableUtils.isBroken(item)) {
                     sender.sendMessage("${ChatColor.RED}This item does not need repair.")
                     return true
                 }
                 var repairable = false
                 for (configType in ItemsRepairAddon.config!!.repairableItemsTypes) {
                     val type = MMOItems.getType(item)
-                    if (type != null && type.name == configType) {
-                        repairable = true; break
-                    }
+                    if (type != null && type.name == configType) { repairable = true; break }
                 }
                 if (!repairable) {
                     sender.sendMessage("${ChatColor.RED}This item is not repairable.")
                     return true
                 }
-                item.durability = 0
+                DisableUtils.removeDisabledName(player)
                 player.sendMessage("${ChatColor.GREEN}Item repaired successfully.")
                 return true
             }

@@ -1,3 +1,11 @@
 config_version: 1.0
+disabled_message: "this item is too damaged to be used!"
+lore:
+  title: "&4BROKEN ITEM"
+  lines:
+    - "&2This item is broken"
+    - "&4You can repair it at a blacksmith"
+    - "&1or use a repair kit"
+
 repairableItemsTypes:
   - "Sword"

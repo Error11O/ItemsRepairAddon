@@ -15,7 +15,6 @@ commands:
 permissions:
     itemsrepairaddon.admin:
             description: Allows the use of /mmorepair command and bypass dropping.
-            default: op
     itemsrepairaddon.10:
             description: 10% chance to drop loot
     itemsrepairaddon.20:
